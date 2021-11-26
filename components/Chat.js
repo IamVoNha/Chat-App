@@ -53,24 +53,24 @@ import { GiftedChat, Bubble } from 'react-native-gifted-chat';
  	}
 
  	render() {
- 		let name = this.props.route.params.name;
- 		let background = this.props.route.params.background;
-    // Sets the entered name as the title in the Chat screen
-		this.props.navigation.setOptions({ title: name });
-		return (
- 			<View style={{ flex: 1, backgroundColor: background }}>
- 				<GiftedChat
-            //change the color of the chat bubble
-            renderBubble={this.renderBubble.bind(this)}
-            messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
-            user={{
-              _id: 1,
-            }}
-        />
-          {Platform.OS === 'android' ? 
-          <KeyboardAvoidingView behavior="height" /> : null}
-      </View>
-    )
-  }
+		   let name = this.props.route.params.name;
+		   let background = this.props.route.params.background;
+		   // Sets the entered name as the title in the Chat screen
+		   this.props.navigation.setOptions({ title: name });
+		   return (
+		      <View style={{ flex: 1, backgroundColor: background }}>
+			    <GiftedChat
+				  //change the color of the chat bubble
+				  renderBubble={this.renderBubble.bind(this)}
+				  messages={this.state.messages}
+				  onSend={messages => this.onSend(messages)}
+				  user={{
+				    _id: 1,
+				  }}
+			    />
+			    {Platform.OS === 'android' ? 
+			    <KeyboardAvoidingView behavior="height" /> : null}
+		      </View>
+    		)
+  	}
 }

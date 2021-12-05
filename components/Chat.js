@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import NetInfo from "@react-native-community/netinfo";
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -98,9 +98,6 @@ deleteMessages = async () => {
    });
  }
 
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
     querySnapshot.forEach((doc) => {

@@ -3,6 +3,8 @@ import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import NetInfo from "@react-native-community/netinfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
 const firebase = require('firebase');
 require('firebase/firestore');
@@ -25,7 +27,11 @@ require('firebase/firestore');
   this.referenceChatMessages = firebase.firestore().collection('messages');
 
  	this.state = {
- 		messages: []
+ 		messages: [],
+    image: null,
+    uid: 0,
+    isConnected: false,
+    location: null
  	};
 };
 
@@ -103,10 +109,12 @@ deleteMessages = async () => {
     querySnapshot.forEach((doc) => {
       let data = doc.data(); 
       messages.push({
-        _id:data._id,
+        _id: data._id,
         text: data.text || "",
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image || null,
+        location: data.location || null
       });
     });
     this.setState({
@@ -117,10 +125,12 @@ deleteMessages = async () => {
   addMessage() {
     const message=this.state.messages[0];
     this.referenceChatMessages.add({
-      _id:message._id,
-      text:message.text,
-      createdAt:message.createdAt,
-      user:message.user
+      _id: message._id,
+      text: message.text || "",
+      createdAt: message.createdAt,
+      user: message.user,
+      image: message.image || null,
+      location: message.location || null
     });
   }
 
@@ -158,6 +168,31 @@ deleteMessages = async () => {
  		)
  	}
 
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  renderCustomView (props) {
+    const { currentMessage} = props;
+    if (currentMessage.location) {
+      return (
+          <MapView
+            style={{width: 150,
+              height: 100,
+              borderRadius: 13,
+              margin: 3}}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          />
+      );
+    }
+    return null;
+  }
+
  	render() {
 		   let name = this.props.route.params.name;
 		   let background = this.props.route.params.background;
@@ -170,8 +205,10 @@ deleteMessages = async () => {
 				  renderBubble={this.renderBubble.bind(this)}
 				  messages={this.state.messages}
 				  onSend={messages => this.onSend(messages)}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
 				  user={{
-				    _id: 1,
+				    _id: this.state.uid,
 				  }}
 			    />
 			    {Platform.OS === 'android' ? 
